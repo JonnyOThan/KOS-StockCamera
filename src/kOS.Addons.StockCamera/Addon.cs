@@ -11,11 +11,13 @@ namespace kOS.AddOns.StockCamera
     {
         private FlightCameraValue flightCam;
 		private MapCameraValue mapCam;
+        private InternalCameraValue ivaCam;
 
         public Addon(SharedObjects shared) : base(shared)
         {
             AddSuffix("FLIGHTCAMERA", new Suffix<FlightCameraValue>(GetFlightCamera));
 			AddSuffix("MAPCAMERA", new Suffix<MapCameraValue>(GetMapCamera));
+            AddSuffix("INTERNALCAMERA", new Suffix<InternalCameraValue>(GetInternalCamera));
         }
 
 		public override BooleanValue Available()
@@ -40,5 +42,14 @@ namespace kOS.AddOns.StockCamera
 			}
 			return mapCam;
 		}
+
+        private InternalCameraValue GetInternalCamera()
+        {
+            if (ivaCam == null)
+            {
+                ivaCam = new InternalCameraValue(shared);
+            }
+            return ivaCam;
+        }
 	}
 }
