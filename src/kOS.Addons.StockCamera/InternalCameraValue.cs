@@ -19,8 +19,7 @@ namespace kOS.AddOns.StockCamera
 			AddSuffix(new string[] { "PITCH", "CAMERAPITCH" }, new SetSuffix<ScalarValue>(GetCameraPitch, SetCameraPitch));
 			AddSuffix(new string[] { "ROT", "ROTATION", "CAMERAROTATION" }, new SetSuffix<ScalarValue>(GetCameraRot, SetCameraRot));
 			AddSuffix(new string[] { "FOV", "CAMERAFOV" }, new SetSuffix<ScalarValue>(GetCameraFoV, SetCameraFoV));
-			AddSuffix(new string[] { "MAKEACTIVE", "SETACTIVE" }, new OneArgsSuffix<CrewMember>(SetActive));
-			AddSuffix(new string[] { "ACTIVEKERBAL"}, new NoArgsSuffix<CrewMember>(GetActiveKerbal));
+			AddSuffix(new string[] { "ACTIVEKERBAL"}, new SetSuffix<CrewMember>(GetActiveKerbal, SetActiveKerbal));
 			AddSuffix(new string[] { "ACTIVE" }, new NoArgsSuffix<BooleanValue>(GetActive));
 		}
 
@@ -54,13 +53,7 @@ namespace kOS.AddOns.StockCamera
 		private void SetCameraFoV(ScalarValue value)
 		{
 			var camera = InternalCamera.Instance;
-			camera.currentZoom = Mathf.Clamp(value / camera.initialZoom, camera.minZoom, camera.maxZoom);
-		}
-
-		private void SetActive(CrewMember crewMember)
-		{
-			var cameraManager = CameraManager.Instance;
-			cameraManager.SetCameraIVA(crewMember.ProtoCrewMember.KerbalRef, true);
+			camera.currentZoom = Mathf.Clamp(value / camera.initialZoom, camera.maxZoom, camera.minZoom);
 		}
 
 		private CrewMember GetActiveKerbal()
@@ -71,6 +64,17 @@ namespace kOS.AddOns.StockCamera
 				return new CrewMember(cameraManager.IVACameraActiveKerbal.protoCrewMember, shared);
 			}
 			throw new KOSException("Failed to get active crewmember");
+		}
+
+		private void SetActiveKerbal(CrewMember crewMember)
+		{
+			if (!shared.Vessel.isActiveVessel)
+				throw new KOSException("ActiveKerbal can only be set on the activevessel!");
+			else if (!shared.Vessel.crew.Contains(crewMember.ProtoCrewMember))
+				throw new KOSException($"CrewMember {crewMember.Name} is not on Vessel {shared.Vessel.name}!");
+
+			var cameraManager = CameraManager.Instance;
+			cameraManager.SetCameraIVA(crewMember.ProtoCrewMember.KerbalRef, true);
 		}
 
 		private BooleanValue GetActive()
