@@ -23,10 +23,8 @@ if (not (defined libcamera_camera)) and addons:available("camera") {
 	global libcamera_camera is addons:camera:flightcamera.
 	global libcamera_doRotation is false.
 	global libcamera_doSlerp is false.
-	global libcamera_doGeo is false.
 	global libcamera_rotationPeriod is 120.
 	global libcamera_rotationRate is 0.
-	global libcamera_degToRad is pi / 180.
 	global libcamera_lastMissionTime is -1.
 	global libcamera_lastHdg is libcamera_camera:camerahdg.
 	global libcamera_lastPitch is libcamera_camera:camerapitch.
